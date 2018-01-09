@@ -12,6 +12,7 @@ namespace Webbserver
         {
             Console.WriteLine("Commit 2");
             Console.WriteLine("Commit Sofia");
+            Console.WriteLine("Commit Martin");
         }
     }
 }
