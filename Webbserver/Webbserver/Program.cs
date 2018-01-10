@@ -39,18 +39,30 @@ namespace Webbserver
                 HttpListenerRequest request = context.Request;
                 // Obtain a response object.
                 HttpListenerResponse response = context.Response;
-                response.AddHeader("Content-Type" , "image/jpeg");
-                response.AddHeader("" , "");
+                
+                response.AddHeader("Content-Type" , "text/html");
+                response.AddHeader("Content-Type", "image/jpeg");
                 // Construct a response.
                 string reqed = request.RawUrl;
                 string test = File.ReadAllText(@"..\..\..\..\Content" + reqed);
+                byte[] image = File.ReadAllBytes(@"..\..\..\..\Content" + @"\laughing_panda.jpg");
                 string responseString = test;                
                 byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+
+
+
+
+
                 // Get a response stream and write the response to it.
-                response.ContentLength64 = buffer.Length;
+                response.ContentLength64 = buffer.Length + image.Length;
+               // response.ContentLength64 = image.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
+                
                 // You must close the output stream.
+
+                output.Write(image, 0, image.Length);
+
                 output.Close();
                 listener.Stop();
             }
