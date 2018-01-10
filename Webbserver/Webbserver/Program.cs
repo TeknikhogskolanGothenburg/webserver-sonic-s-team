@@ -13,9 +13,17 @@ namespace Webbserver
     {
         static void Main(string[] prefixes)
         {
-
+            int counter = 1;
             while (true)
             {
+                // Create Cookie
+                Cookie cookie = new Cookie
+                {
+                    Name = "Counter",
+                    Value = counter.ToString(),
+
+                };
+
 
                 if (!HttpListener.IsSupported)
                 {
@@ -46,15 +54,12 @@ namespace Webbserver
 
                 // Get current time
                 DateTime time = DateTime.Now;
+
                 
-                // Create Cookie
-                Cookie cookie = new Cookie
-                {
-                    Name = "MyCookie",
-                    Expires = time.AddYears(1)
-                };                
+                
                 response.SetCookie(cookie);
-                response.AddHeader("Content-Type", "text/html");                
+                response.AddHeader("Content-Type", "text/html");   
+                
 
                 // Construct a response.
                 string requested = request.RawUrl;
@@ -73,6 +78,7 @@ namespace Webbserver
                 // You must close the output stream.
                 output.Close();
                 listener.Stop();
+                counter++;
             }
         }
     }
