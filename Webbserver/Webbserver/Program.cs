@@ -60,8 +60,13 @@ namespace Webbserver
                // response.AddHeader("Cookie", now.ToString());
                 
                 // Construct a response.
-                string reqed = request.RawUrl;
-                byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + reqed);
+                string requested = request.RawUrl;
+                if (requested == "/")
+                {
+                    requested = "/index.html";
+                }
+
+                byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
                 
                // string responseString = test;                
                // byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
