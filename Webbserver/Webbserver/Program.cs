@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace Webbserver
 {
@@ -12,6 +13,7 @@ namespace Webbserver
     {
         static void Main(string[] prefixes)
         {
+            
            while (true)
             {
             
@@ -39,9 +41,23 @@ namespace Webbserver
                 HttpListenerRequest request = context.Request;
                 // Obtain a response object.
                 HttpListenerResponse response = context.Response;
-                context.Response.ContentType = "text/html";
+
+                // Get current time
+                DateTime time = DateTime.Now;
+                // Create Cookie
+                Cookie cookie = new Cookie
+                {
+                    Name = "MyCookie",
+                    Expires = time.AddYears(1)
+                    
+                    
+                };
+               
+                
+                response.SetCookie(cookie);
 
                 response.AddHeader("Content-Type" , "text/html");
+               // response.AddHeader("Cookie", now.ToString());
                 
                 // Construct a response.
                 string reqed = request.RawUrl;
@@ -49,11 +65,7 @@ namespace Webbserver
                 
                // string responseString = test;                
                // byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-
-
-
-               
-
+          
 
                 // Get a response stream and write the response to it.
                 response.ContentLength64 = buffer.Length;
