@@ -13,10 +13,10 @@ namespace Webbserver
     {
         static void Main(string[] prefixes)
         {
-            
-           while (true)
+
+            while (true)
             {
-            
+
                 if (!HttpListener.IsSupported)
                 {
                     Console.WriteLine("Windows XP SP2 or Server 2003 is required to use the HttpListener class.");
@@ -26,8 +26,10 @@ namespace Webbserver
                 // for example "http://contoso.com:8080/index/".
                 if (prefixes == null || prefixes.Length == 0)
                     throw new ArgumentException("prefixes");
+                
                 // Create a listener.
                 HttpListener listener = new HttpListener();
+                
                 // Add the prefixes.
                 foreach (string s in prefixes)
                 {
@@ -36,51 +38,39 @@ namespace Webbserver
                 listener.Start();
                 Console.WriteLine("Listening...");
                 // Note: The GetContext method blocks while waiting for a request. 
-               
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
+                
                 // Obtain a response object.
                 HttpListenerResponse response = context.Response;
 
                 // Get current time
                 DateTime time = DateTime.Now;
+                
                 // Create Cookie
                 Cookie cookie = new Cookie
                 {
                     Name = "MyCookie",
                     Expires = time.AddYears(1)
-                    
-                    
-                };
-               
-                
+                };                
                 response.SetCookie(cookie);
+                response.AddHeader("Content-Type", "text/html");                
 
-                response.AddHeader("Content-Type" , "text/html");
-               // response.AddHeader("Cookie", now.ToString());
-                
                 // Construct a response.
                 string requested = request.RawUrl;
                 if (requested == "/")
                 {
                     requested = "/index.html";
                 }
-
                 byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                
-               // string responseString = test;                
-               // byte[] buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-          
+
 
                 // Get a response stream and write the response to it.
                 response.ContentLength64 = buffer.Length;
-               // response.ContentLength64 = image.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
-                
-                // You must close the output stream.
 
-               
+                // You must close the output stream.
                 output.Close();
                 listener.Stop();
             }
