@@ -12,8 +12,9 @@ namespace Webbserver
     {
         static void Main(string[] prefixes)
         {
-            while (true)
+           while (true)
             {
+            
                 if (!HttpListener.IsSupported)
                 {
                     Console.WriteLine("Windows XP SP2 or Server 2003 is required to use the HttpListener class.");
@@ -33,10 +34,13 @@ namespace Webbserver
                 listener.Start();
                 Console.WriteLine("Listening...");
                 // Note: The GetContext method blocks while waiting for a request. 
+               
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
                 // Obtain a response object.
                 HttpListenerResponse response = context.Response;
+                response.AddHeader("Content-Type" , "image/jpeg");
+                response.AddHeader("" , "");
                 // Construct a response.
                 string reqed = request.RawUrl;
                 string test = File.ReadAllText(@"..\..\..\..\Content" + reqed);
