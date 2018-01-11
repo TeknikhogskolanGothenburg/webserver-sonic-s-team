@@ -72,6 +72,14 @@ namespace Webbserver
                     response.AddHeader("Content-Type", "text/html");
 
                 }
+                if (requested.EndsWith(".htm"))
+                {
+                    //  response.ContentType = "text/html";
+                    Console.WriteLine("Response was content type text/html");
+                    string responseString = File.ReadAllText(@"..\..\..\..\Content" + requested);
+                    buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.AddHeader("Content-Type", "text/html");
+                }
                 else if (requested.EndsWith(".jpg"))
                 {
                   //  context.Response.ContentType = "image/jpeg";
