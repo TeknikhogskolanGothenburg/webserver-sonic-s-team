@@ -67,12 +67,14 @@ namespace Webbserver
         {
             int counter = 1;
             
+                
                 // Create Cookie
                 Cookie cookie = new Cookie
                 {
                     Name = "Counter",
                     Value = counter.ToString(),
                 };
+
 
                 if (!HttpListener.IsSupported)
                 {
@@ -95,6 +97,9 @@ namespace Webbserver
                 listener.Start();
                 Console.WriteLine("Listening...");
 
+            //Dictionary<string, int> webServerUserCookie = new Dictionary<string, int>();
+            //webServerUserCookie.Add("counter1", counter);
+
             while (true)
             {
                 // Note: The GetContext method blocks while waiting for a request. 
@@ -113,18 +118,34 @@ namespace Webbserver
                 }
 
                 ContentType(requested, response);
-                byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                if (File.Exists(@"..\..\..\..\Content" + requested)) { 
+              
+                    byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    // Get a response stream and write the response to it.
+                    response.ContentLength64 = buffer.Length;
+                    System.IO.Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+
+                    output.Close();
+                }
+                else
+                {
+                    response.StatusCode = 404; // finns inte
+                    byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
+                    // Get a response stream and write the response to it.
+                    response.ContentLength64 = buffer.Length;
+                    System.IO.Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+
+                    output.Close();
+                }
+
                 // Respond with correct Content-Type
 
 
-                // Get a response stream and write the response to it.
-                response.ContentLength64 = buffer.Length;
-                System.IO.Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-
                 // You must close the output stream.
-                output.Close();
-              //  listener.Stop();
+
+                //  listener.Stop();
 
                 counter++;
             }
