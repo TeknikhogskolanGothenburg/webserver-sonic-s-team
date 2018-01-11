@@ -11,6 +11,51 @@ namespace Webbserver
 {
     class Program
     {
+        public static void ContentType (string requestedFile, HttpListenerResponse response)
+        {
+            if (requestedFile.EndsWith(".html"))
+            {
+                Console.WriteLine("Response was content type text/html");
+                response.AddHeader("Content-Type", "text/html");
+
+            }
+            else if (requestedFile.EndsWith(".htm"))
+            {
+                Console.WriteLine("Response was content type text/html");
+                response.AddHeader("Content-Type", "text/html");
+            }
+            else if (requestedFile.EndsWith(".jpg"))
+            {
+                Console.WriteLine("Response was content type image/jpeg");
+                response.AddHeader("Content-Type", "image/jpeg");
+            }
+            else if (requestedFile.EndsWith(".gif"))
+            {
+                Console.WriteLine("Response was content type image/gif");
+                response.AddHeader("Content-Type", "image/gif");
+            }
+            else if (requestedFile.EndsWith(".pdf"))
+            {
+                Console.WriteLine("Response was content type application/pdf");
+                response.AddHeader("Content-Type", "application/pdf");
+            }
+            else if (requestedFile.EndsWith(".js"))
+            {
+                Console.WriteLine("Response was content type application/x-javascript");
+                response.AddHeader("Content-Type", "application/x-javascript");
+            }
+
+            else if (requestedFile.EndsWith(".css"))
+            {
+                Console.WriteLine("Response was content type css");
+                response.AddHeader("Content-Type", "text/css");
+            }
+            
+            /*else if(requestedFile.EndsWith(@"/SubFolder/index.html"))
+            {
+
+            }*/
+        }
         static void Main(string[] prefixes)
         {
             int counter = 1;
@@ -63,63 +108,9 @@ namespace Webbserver
                     requested = "/index.html";
                 }
                 
-                byte[] buffer = new byte[50000];
 
+                byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
                 // Respond with correct Content-Type
-                if (requested.EndsWith(".html"))
-                {
-                  //  response.ContentType = "text/html";
-                    Console.WriteLine("Response was content type text/html");
-                    string responseString = File.ReadAllText(@"..\..\..\..\Content" + requested);
-                    buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                    response.AddHeader("Content-Type", "text/html");
-
-                }
-                else if (requested.EndsWith(".htm"))
-                {
-                    //  response.ContentType = "text/html";
-                    Console.WriteLine("Response was content type text/html");
-                    string responseString = File.ReadAllText(@"..\..\..\..\Content" + requested);
-                    buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
-                    response.AddHeader("Content-Type", "text/html");
-                }
-                else if (requested.EndsWith(".jpg"))
-                {
-                  //  context.Response.ContentType = "image/jpeg";
-                    Console.WriteLine("Response was content type image/jpeg");
-                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                    response.AddHeader("Content-Type", "image/jpeg");
-                }
-                else if (requested.EndsWith(".gif"))
-                {
-                  //  context.Response.ContentType = "image/gif";
-                    Console.WriteLine("Response was content type image/gif");
-                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                    response.AddHeader("Content-Type", "image/gif");
-                }
-                else if (requested.EndsWith(".pdf"))
-                {
-                  //  context.Response.ContentType = "application/pdf";
-                    Console.WriteLine("Response was content type application/pdf");
-                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                    response.AddHeader("Content-Type", "application/pdf");
-                }
-                else if (requested.EndsWith(".js"))
-                {
-                   // context.Response.ContentType = "application/x-javascript";
-                    Console.WriteLine("Response was content type application/x-javascript");
-                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                    response.AddHeader("Content-Type", "application/x-javascript");
-                }
-
-                else if (requested.EndsWith(".css"))
-                {
-                   // context.Response.ContentType = "text/css";
-                    Console.WriteLine("Response was content type css");
-                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-                    response.AddHeader("Content-Type", "text/css");
-                }
-
 
 
                 // Get a response stream and write the response to it.
