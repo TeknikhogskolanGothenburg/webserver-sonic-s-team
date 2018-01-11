@@ -14,8 +14,7 @@ namespace Webbserver
         static void Main(string[] prefixes)
         {
             int counter = 1;
-            while (true)
-            {
+            
                 // Create Cookie
                 Cookie cookie = new Cookie
                 {
@@ -43,6 +42,9 @@ namespace Webbserver
                 }
                 listener.Start();
                 Console.WriteLine("Listening...");
+
+            while (true)
+            {
                 // Note: The GetContext method blocks while waiting for a request. 
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;                              
@@ -55,11 +57,12 @@ namespace Webbserver
                 
                 // Construct a response.
                 string requested = request.RawUrl;
+                
                 if (requested == "/")
                 {
                     requested = "/index.html";
                 }
-
+                
                 byte[] buffer = new byte[50000];
 
                 // Respond with correct Content-Type
@@ -72,7 +75,7 @@ namespace Webbserver
                     response.AddHeader("Content-Type", "text/html");
 
                 }
-                if (requested.EndsWith(".htm"))
+                else if (requested.EndsWith(".htm"))
                 {
                     //  response.ContentType = "text/html";
                     Console.WriteLine("Response was content type text/html");
@@ -126,7 +129,8 @@ namespace Webbserver
 
                 // You must close the output stream.
                 output.Close();
-                listener.Stop();
+              //  listener.Stop();
+
                 counter++;
             }
         }
