@@ -13,9 +13,17 @@ namespace Webbserver
     {
         static void Main(string[] prefixes)
         {
-
+            int counter = 1;
             while (true)
             {
+                // Create Cookie
+                Cookie cookie = new Cookie
+                {
+                    Name = "Counter",
+                    Value = counter.ToString(),
+
+                };
+
 
                 if (!HttpListener.IsSupported)
                 {
@@ -46,14 +54,12 @@ namespace Webbserver
 
                 // Get current time
                 DateTime time = DateTime.Now;
+
                 
-                // Create Cookie
-                Cookie cookie = new Cookie
-                {
-                    Name = "MyCookie",
-                    Expires = time.AddYears(1)
-                };                
-                response.SetCookie(cookie);                            
+                
+                response.SetCookie(cookie);
+                response.AddHeader("Content-Type", "text/html");   
+                
 
                 // Construct a response.
                 string requested = request.RawUrl;
@@ -62,29 +68,6 @@ namespace Webbserver
                     requested = "/index.html";
                 }
                 byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-
-                // Respond with correct Content-Type
-
-                if (requested.EndsWith(".html"))
-                {
-                    response.ContentType = "text/html";
-                }
-                else if (requested.EndsWith(".jpg"))
-                {
-                    context.Response.ContentType = "image/jpeg";
-                }
-                else if (requested.EndsWith(".gif"))
-                {
-                    context.Response.ContentType = "image/gif";
-                }
-                else if (requested.EndsWith(".pdf"))
-                {
-                    context.Response.ContentType = "application/pdf";
-                }
-                else if (requested.EndsWith(".js"))
-                {
-                    context.Response.ContentType = "application/x-javascript";
-                }
 
 
                 // Get a response stream and write the response to it.
@@ -95,6 +78,7 @@ namespace Webbserver
                 // You must close the output stream.
                 output.Close();
                 listener.Stop();
+                counter++;
             }
         }
     }
