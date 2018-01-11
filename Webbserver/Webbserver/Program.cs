@@ -14,7 +14,11 @@ namespace Webbserver
         static string requested = "";
         public static void ContentType (string requestedFile, HttpListenerResponse response)
         {
+            DateTime now = DateTime.Now;
+            DateTime future = now.AddYears(1);
+            string expires = future.ToString();
 
+            response.AddHeader("Expires", expires);
             if (requestedFile.EndsWith(".html"))
             {
                 Console.WriteLine("Response was content type text/html");
