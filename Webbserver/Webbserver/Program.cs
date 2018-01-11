@@ -100,10 +100,7 @@ namespace Webbserver
                 // Note: The GetContext method blocks while waiting for a request. 
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;                              
-                HttpListenerResponse response = context.Response;
-
-                // Get current time
-                DateTime time = DateTime.Now;                               
+                HttpListenerResponse response = context.Response;                             
                 
                 response.SetCookie(cookie);                
                 
