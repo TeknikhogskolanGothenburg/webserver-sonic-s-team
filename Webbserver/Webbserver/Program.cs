@@ -11,8 +11,10 @@ namespace Webbserver
 {
     class Program
     {
+        static string requested = "";
         public static void ContentType (string requestedFile, HttpListenerResponse response)
         {
+
             if (requestedFile.EndsWith(".html"))
             {
                 Console.WriteLine("Response was content type text/html");
@@ -50,11 +52,12 @@ namespace Webbserver
                 Console.WriteLine("Response was content type css");
                 response.AddHeader("Content-Type", "text/css");
             }
-            
-            /*else if(requestedFile.EndsWith(@"/SubFolder/index.html"))
-            {
 
-            }*/
+            else if (requestedFile == "/Subfolder/")
+            {
+                response.ContentType = "text/html";
+                requested = @"\Subfolder\index.html";
+            }
         }
         static void Main(string[] prefixes)
         {
@@ -101,7 +104,7 @@ namespace Webbserver
                 response.SetCookie(cookie);                
                 
                 // Construct a response.
-                string requested = request.RawUrl;
+                requested = request.RawUrl;
                 
                 if (requested == "/")
                 {
