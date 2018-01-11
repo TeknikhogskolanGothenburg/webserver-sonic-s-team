@@ -67,6 +67,29 @@ namespace Webbserver
                 {
                     requested = "/index.html";
                 }
+                // Respond with correct Content-Type
+
+                if (requested.EndsWith(".html"))
+                {
+                    response.ContentType = "text/html";
+                }
+                else if (requested.EndsWith(".jpg"))
+                {
+                    context.Response.ContentType = "image/jpeg";
+                }
+                else if (requested.EndsWith(".gif"))
+                {
+                    context.Response.ContentType = "image/gif";
+                }
+                else if (requested.EndsWith(".pdf"))
+                {
+                    context.Response.ContentType = "application/pdf";
+                }
+                else if (requested.EndsWith(".js"))
+                {
+                    context.Response.ContentType = "application/x-javascript";
+                }
+
                 byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
 
 
