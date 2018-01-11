@@ -21,9 +21,7 @@ namespace Webbserver
                 {
                     Name = "Counter",
                     Value = counter.ToString(),
-
                 };
-
 
                 if (!HttpListener.IsSupported)
                 {
@@ -47,19 +45,13 @@ namespace Webbserver
                 Console.WriteLine("Listening...");
                 // Note: The GetContext method blocks while waiting for a request. 
                 HttpListenerContext context = listener.GetContext();
-                HttpListenerRequest request = context.Request;
-                
-                // Obtain a response object.
+                HttpListenerRequest request = context.Request;                              
                 HttpListenerResponse response = context.Response;
 
                 // Get current time
-                DateTime time = DateTime.Now;
-
+                DateTime time = DateTime.Now;                               
                 
-                
-                response.SetCookie(cookie);
-                response.AddHeader("Content-Type", "text/html");   
-                
+                response.SetCookie(cookie);                
 
                 // Construct a response.
                 string requested = request.RawUrl;
@@ -67,8 +59,8 @@ namespace Webbserver
                 {
                     requested = "/index.html";
                 }
+                
                 // Respond with correct Content-Type
-
                 if (requested.EndsWith(".html"))
                 {
                     response.ContentType = "text/html";
@@ -91,7 +83,6 @@ namespace Webbserver
                 }
 
                 byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
-
 
                 // Get a response stream and write the response to it.
                 response.ContentLength64 = buffer.Length;
