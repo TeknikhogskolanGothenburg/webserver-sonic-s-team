@@ -52,37 +52,64 @@ namespace Webbserver
                 DateTime time = DateTime.Now;                               
                 
                 response.SetCookie(cookie);                
-
+                
                 // Construct a response.
                 string requested = request.RawUrl;
                 if (requested == "/")
                 {
                     requested = "/index.html";
                 }
-                
+
+                byte[] buffer = new byte[50000];
+
                 // Respond with correct Content-Type
                 if (requested.EndsWith(".html"))
                 {
-                    response.ContentType = "text/html";
+                  //  response.ContentType = "text/html";
+                    Console.WriteLine("Response was content type text/html");
+                    string responseString = File.ReadAllText(@"..\..\..\..\Content" + requested);
+                    buffer = System.Text.Encoding.UTF8.GetBytes(responseString);
+                    response.AddHeader("Content-Type", "text/html");
+
                 }
                 else if (requested.EndsWith(".jpg"))
                 {
-                    context.Response.ContentType = "image/jpeg";
+                  //  context.Response.ContentType = "image/jpeg";
+                    Console.WriteLine("Response was content type image/jpeg");
+                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    response.AddHeader("Content-Type", "image/jpeg");
                 }
                 else if (requested.EndsWith(".gif"))
                 {
-                    context.Response.ContentType = "image/gif";
+                  //  context.Response.ContentType = "image/gif";
+                    Console.WriteLine("Response was content type image/gif");
+                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    response.AddHeader("Content-Type", "image/gif");
                 }
                 else if (requested.EndsWith(".pdf"))
                 {
-                    context.Response.ContentType = "application/pdf";
+                  //  context.Response.ContentType = "application/pdf";
+                    Console.WriteLine("Response was content type application/pdf");
+                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    response.AddHeader("Content-Type", "application/pdf");
                 }
                 else if (requested.EndsWith(".js"))
                 {
-                    context.Response.ContentType = "application/x-javascript";
+                   // context.Response.ContentType = "application/x-javascript";
+                    Console.WriteLine("Response was content type application/x-javascript");
+                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    response.AddHeader("Content-Type", "application/x-javascript");
                 }
 
-                byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                else if (requested.EndsWith(".css"))
+                {
+                   // context.Response.ContentType = "text/css";
+                    Console.WriteLine("Response was content type css");
+                    buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                    response.AddHeader("Content-Type", "text/css");
+                }
+
+
 
                 // Get a response stream and write the response to it.
                 response.ContentLength64 = buffer.Length;
