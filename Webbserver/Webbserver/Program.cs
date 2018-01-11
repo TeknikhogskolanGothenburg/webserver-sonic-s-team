@@ -107,8 +107,8 @@ namespace Webbserver
                 {
                     requested = "/index.html";
                 }
-                
 
+                ContentType(requested, response);
                 byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
                 // Respond with correct Content-Type
 
