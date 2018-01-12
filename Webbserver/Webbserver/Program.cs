@@ -13,7 +13,7 @@ namespace Webbserver
     class Program
     {
         static string requested = "";
-        public static void SetResponseContentType(string requestedFile, HttpListenerResponse response)
+        public static void SetResponseContentType(string requestedFile, HttpListenerResponse response, HttpListenerRequest request)
         {
             DateTime now = DateTime.Now;
             DateTime future = now.AddYears(1);
@@ -62,6 +62,26 @@ namespace Webbserver
             {
                 response.ContentType = "text/html";
                 requested = @"\Subfolder\index.html";
+            }
+            else if (requestedFile.Contains("/Dynamic"))
+            {
+                if (request.QueryString["input1"] != null)
+                {
+                    int input1 = int.Parse(request.QueryString["input1"]);
+                    //  int input2 = int.Parse(request.QueryString["input2"]);
+                    int result = input1;
+
+                    string dynamicPage = "<HTML><BODY>" + result.ToString() + "</BODY></HTML>";
+
+                    byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
+
+                    response.ContentLength64 = buffer.Length;
+                    System.IO.Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+
+                    output.Close();
+                }
+
             }
         }
         static void Main(string[] prefixes)
@@ -140,7 +160,7 @@ namespace Webbserver
 
                 else
                 {
-                    SetResponseContentType(requested, response);
+                    SetResponseContentType(requested, response, request);
                     if (File.Exists(@"..\..\..\..\Content" + requested))
                     {
 
