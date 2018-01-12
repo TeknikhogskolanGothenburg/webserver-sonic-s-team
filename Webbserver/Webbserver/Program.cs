@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -12,7 +13,7 @@ namespace Webbserver
     class Program
     {
         static string requested = "";
-        public static void ContentType (string requestedFile, HttpListenerResponse response)
+        public static void SetResponseContentType(string requestedFile, HttpListenerResponse response)
         {
             DateTime now = DateTime.Now;
             DateTime future = now.AddYears(1);
@@ -65,79 +66,104 @@ namespace Webbserver
         }
         static void Main(string[] prefixes)
         {
-            int counter = 1;
-            
-                
-                // Create Cookie
-                Cookie cookie = new Cookie
-                {
-                    Name = "Counter",
-                    Value = counter.ToString(),
-                };
+            if (!HttpListener.IsSupported)
+            {
+                Console.WriteLine("Windows XP SP2 or Server 2003 is required to use the HttpListener class.");
+                return;
+            }
+            // URI prefixes are required,
+            // for example "http://contoso.com:8080/index/".
+            if (prefixes == null || prefixes.Length == 0)
+                throw new ArgumentException("prefixes");
 
+            // Create a listener.
+            HttpListener listener = new HttpListener();
 
-                if (!HttpListener.IsSupported)
-                {
-                    Console.WriteLine("Windows XP SP2 or Server 2003 is required to use the HttpListener class.");
-                    return;
-                }
-                // URI prefixes are required,
-                // for example "http://contoso.com:8080/index/".
-                if (prefixes == null || prefixes.Length == 0)
-                    throw new ArgumentException("prefixes");
-                
-                // Create a listener.
-                HttpListener listener = new HttpListener();
-                
-                // Add the prefixes.
-                foreach (string s in prefixes)
-                {
-                    listener.Prefixes.Add(s);
-                }
-                listener.Start();
-                Console.WriteLine("Listening...");
+            // Add the prefixes.
+            foreach (string s in prefixes)
+            {
+                listener.Prefixes.Add(s);
+            }
+            listener.Start();
+            Console.WriteLine("Listening...");
 
             //Dictionary<string, int> webServerUserCookie = new Dictionary<string, int>();
             //webServerUserCookie.Add("counter1", counter);
+            Dictionary<string, int> sessionCounters = new Dictionary<string, int>();
 
             while (true)
             {
                 // Note: The GetContext method blocks while waiting for a request. 
                 HttpListenerContext context = listener.GetContext();
-                HttpListenerRequest request = context.Request;                              
-                HttpListenerResponse response = context.Response;                             
+                HttpListenerRequest request = context.Request;
+                HttpListenerResponse response = context.Response;
+                Console.WriteLine("request to " + request.RawUrl);
+                Cookie cookie = new Cookie
+                {
+                    Name = "SessionID",
+                    Path = "",
+                    Expires = DateTime.MinValue
+                };
                 
-                response.SetCookie(cookie);                
-                
+                //If cookie doesn't exist or can't be found, generate new sessionID.
+                if (request.Cookies["SessionID"] == null || !sessionCounters.ContainsKey(request.Cookies["SessionID"].Value))
+                {
+                    Console.WriteLine("there was no cookie");
+                    cookie.Value = new Random().Next().ToString();
+                    sessionCounters.Add(cookie.Value, 1);
+                }
+                else
+                {
+                    Console.WriteLine("the cookie was " + request.Cookies["SessionID"].Value);
+                    cookie.Value = request.Cookies["SessionID"].Value;
+                    sessionCounters[cookie.Value] += 1;
+                }
+                Console.WriteLine("The counter was: " + sessionCounters[cookie.Value]);
+                response.SetCookie(cookie);
+
                 // Construct a response.
                 requested = request.RawUrl;
-                
+
                 if (requested == "/")
                 {
                     requested = "/index.html";
                 }
 
-                ContentType(requested, response);
-                if (File.Exists(@"..\..\..\..\Content" + requested)) { 
-              
-                    byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                if (requested == "/counter")
+                {
+                    byte[] buffer = Encoding.UTF8.GetBytes(sessionCounters[cookie.Value].ToString());
                     // Get a response stream and write the response to it.
                     response.ContentLength64 = buffer.Length;
                     System.IO.Stream output = response.OutputStream;
                     output.Write(buffer, 0, buffer.Length);
-
-                    output.Close();
                 }
+
                 else
                 {
-                    response.StatusCode = 404; // finns inte
-                    byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
-                    // Get a response stream and write the response to it.
-                    response.ContentLength64 = buffer.Length;
-                    System.IO.Stream output = response.OutputStream;
-                    output.Write(buffer, 0, buffer.Length);
+                    SetResponseContentType(requested, response);
+                    if (File.Exists(@"..\..\..\..\Content" + requested))
+                    {
 
-                    output.Close();
+                        byte[] buffer = File.ReadAllBytes(@"..\..\..\..\Content" + requested);
+                        // Get a response stream and write the response to it.
+                        response.ContentLength64 = buffer.Length;
+                        System.IO.Stream output = response.OutputStream;
+                        output.Write(buffer, 0, buffer.Length);
+
+                        output.Close();
+                    }
+                    else
+                    {
+                        response.StatusCode = 404; // finns inte
+                        byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
+                        // Get a response stream and write the response to it.
+                        response.ContentLength64 = buffer.Length;
+                        System.IO.Stream output = response.OutputStream;
+                        output.Write(buffer, 0, buffer.Length);
+
+                        output.Close();
+                    }
+
                 }
 
                 // Respond with correct Content-Type
@@ -146,8 +172,6 @@ namespace Webbserver
                 // You must close the output stream.
 
                 //  listener.Stop();
-
-                counter++;
             }
         }
     }
