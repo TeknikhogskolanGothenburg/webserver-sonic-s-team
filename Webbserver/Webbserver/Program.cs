@@ -12,6 +12,7 @@ namespace Webbserver
 {
     class Program
     {
+        static Dictionary<string, int> sessionCounters = new Dictionary<string, int>();
         static string requested = "";
         
         static void Main(string[] prefixes)
@@ -35,9 +36,7 @@ namespace Webbserver
                 listener.Prefixes.Add(s);
             }
             listener.Start();
-            Console.WriteLine("Listening...");
-            
-            Dictionary<string, int> sessionCounters = new Dictionary<string, int>();
+            Console.WriteLine("Listening...");           
 
             while (true)
             {
