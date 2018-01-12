@@ -12,7 +12,7 @@ namespace Webbserver
 {
     class Program
     {
-        static Dictionary<string, int> sessionCounters = new Dictionary<string, int>();
+        
         static string requested = "";
         
         static void Main(string[] prefixes)
@@ -36,8 +36,7 @@ namespace Webbserver
                 listener.Prefixes.Add(s);
             }
             listener.Start();
-            Console.WriteLine("Listening...");           
-
+            Console.WriteLine("Listening...");
             while (true)
             {
                 // Note: The GetContext method blocks while waiting for a request. 
@@ -51,7 +50,9 @@ namespace Webbserver
                     Path = "",
                     Expires = DateTime.MinValue
                 };
-                
+
+                Dictionary<string, int> sessionCounters = new Dictionary<string, int>();
+
                 //If cookie doesn't exist or can't be found, generate new sessionID.
                 if (request.Cookies["SessionID"] == null || !sessionCounters.ContainsKey(request.Cookies["SessionID"].Value))
                 {
