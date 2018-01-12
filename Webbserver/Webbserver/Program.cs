@@ -65,12 +65,16 @@ namespace Webbserver
             }
             else if (requestedFile.Contains("/Dynamic"))
             {
-                if (request.QueryString["input1"] != null)
+                if ((request.QueryString["input1"] != null) && (request.QueryString["input1"] != null))
                 {
-                    int input1 = int.Parse(request.QueryString["input1"]);
-                    //  int input2 = int.Parse(request.QueryString["input2"]);
-                    int result = input1;
-
+                    string[] splitQuery = new string[2];
+                    splitQuery[0] = request.QueryString["input1"];
+                    splitQuery[1] = request.QueryString["input2"];
+                    int input1 = int.Parse(splitQuery[0]);
+                    int input2 = int.Parse(splitQuery[1]);
+                    
+                    int result = input1 + input2;
+                    
                     string dynamicPage = "<HTML><BODY>" + result.ToString() + "</BODY></HTML>";
 
                     byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
@@ -174,14 +178,17 @@ namespace Webbserver
                     }
                     else
                     {
-                        response.StatusCode = 404; // finns inte
-                        byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
-                        // Get a response stream and write the response to it.
-                        response.ContentLength64 = buffer.Length;
-                        System.IO.Stream output = response.OutputStream;
-                        output.Write(buffer, 0, buffer.Length);
+                        if (!requested.Contains("/Dynamic"))
+                        {
+                            response.StatusCode = 404; // finns inte
+                            byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
+                            // Get a response stream and write the response to it.
+                            response.ContentLength64 = buffer.Length;
+                            System.IO.Stream output = response.OutputStream;
+                            output.Write(buffer, 0, buffer.Length);
 
-                        output.Close();
+                            output.Close();
+                        }
                     }
 
                 }
