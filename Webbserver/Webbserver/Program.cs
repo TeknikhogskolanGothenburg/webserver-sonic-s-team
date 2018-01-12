@@ -57,8 +57,16 @@ namespace Webbserver
                 if (request.Cookies["counter"] == null || !sessionCounters.ContainsKey(request.Cookies["counter"].Value))
                 {
                     Console.WriteLine("there was no cookie");
-                    cookie.Value = new Random().Next().ToString();
-                    sessionCounters.Add(cookie.Value, 1);
+                    bool loopCondition = true;
+                    while (loopCondition) {
+                        cookie.Value = new Random().Next().ToString();
+                        if (!sessionCounters.ContainsKey(cookie.Value))
+                        {
+                            sessionCounters.Add(cookie.Value, 1);
+                            loopCondition = false;
+                        }
+                       
+                    }
                 }
                 else
                 {
@@ -101,7 +109,7 @@ namespace Webbserver
                     }
                     else
                     {
-                        if (!requested.Contains("/Dynamic"))
+                        if (!requested.Contains("/dynamic"))
                         {
                             response.StatusCode = 404; // finns inte
                             byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
@@ -121,7 +129,7 @@ namespace Webbserver
         {
             DateTime now = DateTime.Now;
             DateTime future = now.AddYears(1);
-            string expires = future.ToString();
+            string expires = future.ToString("o");
             response.AddHeader("Expires", expires);
 
             if (requestedFile.EndsWith(".html"))
@@ -151,8 +159,8 @@ namespace Webbserver
             }
             else if (requestedFile.EndsWith(".js"))
             {
-                Console.WriteLine("Response was content type application/x-javascript");
-                response.AddHeader("Content-Type", "application/x-javascript");
+                Console.WriteLine("Response was content type application/javascript");
+                response.AddHeader("Content-Type", "application/javascript");
             }
             else if (requestedFile.EndsWith(".css"))
             {
@@ -164,7 +172,7 @@ namespace Webbserver
                 response.ContentType = "text/html";
                 requested = @"\Subfolder\index.html";
             }
-            else if (requestedFile.Contains("/Dynamic?"))
+            else if (requestedFile.Contains("/dynamic?"))
             {
                 if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
                 {
@@ -175,9 +183,9 @@ namespace Webbserver
                     int input2 = int.Parse(splitQuery[1]);
                     var accept = request.Headers["Accept"];
                     int result = input1 + input2;
-                    if (accept.StartsWith("text/html"))
+                    if (accept == null || accept.StartsWith("text/html"))
                     {
-                        string dynamicPage = "<HTML><BODY>" + result.ToString() + "</BODY></HTML>";
+                        string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
                         byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
 
                         response.ContentLength64 = buffer.Length;
@@ -209,7 +217,7 @@ namespace Webbserver
 
                     int result = input1;
 
-                    string dynamicPage = "<HTML><BODY>" + result.ToString() + "</BODY></HTML>";
+                    string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
 
                     byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
 
@@ -220,10 +228,10 @@ namespace Webbserver
                     output.Close();
                 }
             }
-            else if (requestedFile.EndsWith("/Dynamic"))
+            else if (requestedFile.EndsWith("/dynamic"))
             {
 
-                string dynamicPage = "<HTML><BODY>No Parameters were specified<br> Nothing to Calculate</BODY></HTML>";
+                string dynamicPage = "<html><body>No Parameters were specified<br> Nothing to Calculate</body></html>";
 
                 byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
 
