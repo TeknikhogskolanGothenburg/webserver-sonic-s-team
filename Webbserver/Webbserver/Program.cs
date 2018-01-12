@@ -166,7 +166,7 @@ namespace Webbserver
             }
             else if (requestedFile.Contains("/Dynamic"))
             {
-                if ((request.QueryString["input1"] != null) && (request.QueryString["input1"] != null))
+                if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
                 {
                     string[] splitQuery = new string[2];
                     splitQuery[0] = request.QueryString["input1"];
