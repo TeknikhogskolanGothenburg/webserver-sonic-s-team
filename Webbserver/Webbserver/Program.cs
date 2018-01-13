@@ -11,10 +11,7 @@ using System.Web;
 namespace Webbserver
 {
     class Program
-    {
-        
-        static string requested = "";
-        
+    {                   
         static void Main(string[] prefixes)
         {
             if (!HttpListener.IsSupported)
@@ -64,8 +61,7 @@ namespace Webbserver
                         {
                             sessionCounters.Add(cookie.Value, 1);
                             loopCondition = false;
-                        }
-                       
+                        }                       
                     }
                 }
                 else
@@ -78,12 +74,8 @@ namespace Webbserver
                 response.SetCookie(cookie);
 
                 // Construct a response.
-                requested = request.RawUrl;
-
-                if (requested == "/")
-                {
-                    requested = "/index.html";
-                }
+                string requested = request.RawUrl;
+                requested = FindPath(requested);                
 
                 if (requested == "/counter")
                 {
@@ -93,7 +85,6 @@ namespace Webbserver
                     System.IO.Stream output = response.OutputStream;
                     output.Write(buffer, 0, buffer.Length);
                 }
-
                 else
                 {
                     SetResponseContentType(requested, response, request);
@@ -125,6 +116,25 @@ namespace Webbserver
                 //  listener.Stop();
             }
         }
+        public static string FindPath(string requested) // Sets empty rawURL and Subfolder to correct path 
+        {
+            string path = "";
+            if (requested == "/")
+            {
+                path = "/index.html";
+            }
+            else if (requested == "/Subfolder/")
+            {
+                //response.ContentType = "text/html";
+                path = @"\Subfolder\index.html";
+            }
+            else
+            {
+                path = requested;
+            }
+            return path;
+        }
+
         public static void SetResponseContentType(string requestedFile, HttpListenerResponse response, HttpListenerRequest request)
         {
             DateTime now = DateTime.Now;
@@ -166,12 +176,7 @@ namespace Webbserver
             {
                 Console.WriteLine("Response was content type css");
                 response.AddHeader("Content-Type", "text/css");
-            }
-            else if (requestedFile == "/Subfolder/")
-            {
-                response.ContentType = "text/html";
-                requested = @"\Subfolder\index.html";
-            }
+            }            
             else if (requestedFile.Contains("/dynamic?"))
             {
                 if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
@@ -241,9 +246,6 @@ namespace Webbserver
 
                 output.Close();
             }
-
-
         }
-    }
-    
+    }    
 }
