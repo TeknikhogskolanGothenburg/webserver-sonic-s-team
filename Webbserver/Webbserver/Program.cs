@@ -135,13 +135,21 @@ namespace Webbserver
             return path;
         }
 
-        public static void SetResponseContentType(string requestedFile, HttpListenerResponse response, HttpListenerRequest request)
+        //Method that sets the expire date for the response to a date 1 year from the date that the
+        //site was firstly accessed.
+        public static void SetExpireDate(HttpListenerResponse response)
         {
             DateTime now = DateTime.Now;
             DateTime future = now.AddYears(1);
             string expires = future.ToString("o");
             response.AddHeader("Expires", expires);
+        }
 
+        //This method sets the correct value for the header property "Content-Type" depending on what type of
+        //document we are requesting from the webserver.
+        public static void SetResponseContentType(string requestedFile, HttpListenerResponse response, HttpListenerRequest request)
+        {
+            SetExpireDate(response);
             if (requestedFile.EndsWith(".html"))
             {
                 Console.WriteLine("Response was content type text/html");
