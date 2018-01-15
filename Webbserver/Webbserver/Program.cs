@@ -99,10 +99,8 @@ namespace Webbserver
 
                         output.Close();
                     }
-                    else
-                    {
-                        if (!requested.Contains("/dynamic"))
-                        {
+                    else if (!requested.Contains("/dynamic"))
+                    {  
                             response.StatusCode = 404; // finns inte
                             byte[] buffer = Encoding.UTF8.GetBytes("File not found!");
                             // Get a response stream and write the response to it.
@@ -110,8 +108,7 @@ namespace Webbserver
                             System.IO.Stream output = response.OutputStream;
                             output.Write(buffer, 0, buffer.Length);
 
-                            output.Close();
-                        }
+                            output.Close();                      
                     }
                 }               
                 //  listener.Stop();
