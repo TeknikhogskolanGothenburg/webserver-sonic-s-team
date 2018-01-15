@@ -240,17 +240,27 @@ namespace Webbserver
             }
             else if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] == null))
             {
+                response.StatusCode = 500; // finns inte
+                byte[] buffer = Encoding.UTF8.GetBytes("Missing input value");
+                // Get a response stream and write the response to it.
+                response.ContentLength64 = buffer.Length;
+                System.IO.Stream output = response.OutputStream;
+                output.Write(buffer, 0, buffer.Length);
+
+                output.Close();
+                /*
                 string[] splitQuery = new string[2];
                 splitQuery[0] = request.QueryString["input1"];               
                 int input1 = int.Parse(splitQuery[0]);                
                 int result = input1;
-               // response.StatusCode = ;
+                
                 string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
                 byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
                 response.ContentLength64 = buffer.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
                 output.Close();
+                */
             }
         }
     }    
