@@ -33,20 +33,6 @@ Using a long random number or string for the session id. This makes it harder fo
 Regenerating the session id after the user has logged in. The attacker can no longer find the same user after login.
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 References: 
 https://en.wikipedia.org/wiki/Session_hijacking
 https://www.owasp.org/index.php/Session_hijacking_attack
