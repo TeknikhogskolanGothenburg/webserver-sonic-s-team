@@ -42,6 +42,7 @@ namespace Webbserver
                 HttpListenerContext context = listener.GetContext();
                 HttpListenerRequest request = context.Request;
                 HttpListenerResponse response = context.Response;
+                SetExpireDate(response);
                 Console.WriteLine("request to " + request.RawUrl);
                 Cookie cookie = new Cookie
                 {
@@ -149,7 +150,6 @@ namespace Webbserver
         //document we are requesting from the webserver.
         public static void SetResponseContentType(string requestedFile, HttpListenerResponse response, HttpListenerRequest request)
         {
-            SetExpireDate(response);
             if (requestedFile.EndsWith(".html"))
             {
                 Console.WriteLine("Response was content type text/html");
