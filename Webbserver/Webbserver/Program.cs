@@ -119,6 +119,7 @@ namespace Webbserver
         }
         public static string FindPath(string requested) // Sets empty rawURL and Subfolder to correct path 
         {
+            requested = requested.ToLower();
             string path = "";
             if (requested == "/")
             {
