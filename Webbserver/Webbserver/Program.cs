@@ -124,7 +124,7 @@ namespace Webbserver
             {
                 path = "/index.html";
             }
-            else if (requested == "/Subfolder/")
+            else if (requested == "/subfolder/")
             {
                 //response.ContentType = "text/html";
                 path = @"\Subfolder\index.html";
