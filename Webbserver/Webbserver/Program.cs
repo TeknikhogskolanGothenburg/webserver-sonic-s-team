@@ -197,6 +197,10 @@ namespace Webbserver
                 output.Close();
             }           
         }
+
+        // This method reads the queries and determines if the values are computable
+        // calculates the two inputs if there are two
+        // if theres only one input in the query the method gives an error
         public static void DynamicQuery(HttpListenerRequest request, HttpListenerResponse response)
         {
             if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
