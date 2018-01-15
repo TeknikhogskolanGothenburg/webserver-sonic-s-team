@@ -186,52 +186,35 @@ namespace Webbserver
                 response.AddHeader("Content-Type", "text/css");
             }            
             else if (requestedFile.Contains("/dynamic?"))
+            {                
+                DynamicQuery(request, response);                
+            }
+            else if (requestedFile.EndsWith("/dynamic"))
             {
-                if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
+                string dynamicPage = "<html><body>No Parameters were specified<br> Nothing to Calculate</body></html>";
+                byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
+                response.ContentLength64 = buffer.Length;
+                System.IO.Stream output = response.OutputStream;
+                output.Write(buffer, 0, buffer.Length);
+                output.Close();
+            }           
+        }
+        public static void DynamicQuery(HttpListenerRequest request, HttpListenerResponse response)
+        {
+            if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] != null))
+            {
+                response.AddHeader("Content-Type", "text/html");
+                string[] splitQuery = new string[2];
+                splitQuery[0] = request.QueryString["input1"];
+                splitQuery[1] = request.QueryString["input2"];
+                int input1 = int.Parse(splitQuery[0]);
+                int input2 = int.Parse(splitQuery[1]);
+                var accept = request.Headers["Accept"];
+                int result = input1 + input2;
+                if (accept == null || accept.StartsWith("text/html"))
                 {
-                    string[] splitQuery = new string[2];
-                    splitQuery[0] = request.QueryString["input1"];
-                    splitQuery[1] = request.QueryString["input2"];
-                    int input1 = int.Parse(splitQuery[0]);
-                    int input2 = int.Parse(splitQuery[1]);
-                    var accept = request.Headers["Accept"];
-                    int result = input1 + input2;
-                    if (accept == null || accept.StartsWith("text/html"))
-                    {
-                        string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
-                        byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
-
-                        response.ContentLength64 = buffer.Length;
-                        System.IO.Stream output = response.OutputStream;
-                        output.Write(buffer, 0, buffer.Length);
-
-                        output.Close();
-                    }
-                    else if(accept.StartsWith("application/xml"))
-                    {
-                        string dynamicPage = "<result><value>This is XML</value></result>";
-                        byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
-
-                        response.ContentLength64 = buffer.Length;
-                        System.IO.Stream output = response.OutputStream;
-                        output.Write(buffer, 0, buffer.Length);
-
-                        output.Close();
-                    }
-                
-                }
-                else if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] == null))
-                {
-                    string[] splitQuery = new string[2];
-                    splitQuery[0] = request.QueryString["input1"];
-                    //  splitQuery[1] = request.QueryString["input2"];
-                    int input1 = int.Parse(splitQuery[0]);
-                    //  int input2 = int.Parse(splitQuery[1]);
-
-                    int result = input1;
 
                     string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
-
                     byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
 
                     response.ContentLength64 = buffer.Length;
@@ -240,18 +223,32 @@ namespace Webbserver
 
                     output.Close();
                 }
+                else if (accept.StartsWith("application/xml"))
+                {
+                    response.AddHeader("Content-Type", "application/xml");
+                    string dynamicPage = "<result><value>" + result.ToString() + "</value></result>";
+                    byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
+
+                    response.ContentLength64 = buffer.Length;
+                    System.IO.Stream output = response.OutputStream;
+                    output.Write(buffer, 0, buffer.Length);
+
+                    output.Close();
+                }
+
             }
-            else if (requestedFile.EndsWith("/dynamic"))
+            else if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] == null))
             {
-
-                string dynamicPage = "<html><body>No Parameters were specified<br> Nothing to Calculate</body></html>";
-
+                string[] splitQuery = new string[2];
+                splitQuery[0] = request.QueryString["input1"];               
+                int input1 = int.Parse(splitQuery[0]);                
+                int result = input1;
+               // response.StatusCode = ;
+                string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
                 byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
-
                 response.ContentLength64 = buffer.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
-
                 output.Close();
             }
         }
