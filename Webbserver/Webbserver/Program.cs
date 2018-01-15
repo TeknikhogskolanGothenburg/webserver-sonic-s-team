@@ -55,13 +55,13 @@ namespace Webbserver
                 if (request.Cookies["counter"] == null || !sessionCounters.ContainsKey(request.Cookies["counter"].Value))
                 {
                     Console.WriteLine("there was no cookie");
-                    bool loopCondition = true;
-                    while (loopCondition) {
+                    bool uniqueIDNotFound = true;
+                    while (uniqueIDNotFound) {
                         cookie.Value = new Random().Next().ToString();
                         if (!sessionCounters.ContainsKey(cookie.Value))
                         {
                             sessionCounters.Add(cookie.Value, 1);
-                            loopCondition = false;
+                            uniqueIDNotFound = false;
                         }                       
                     }
                 }
