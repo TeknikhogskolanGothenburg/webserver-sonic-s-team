@@ -206,12 +206,16 @@ namespace Webbserver
             {
                 response.AddHeader("Content-Type", "text/html");
                 string[] splitQuery = new string[2];
+
                 splitQuery[0] = request.QueryString["input1"];
                 splitQuery[1] = request.QueryString["input2"];
+
                 int input1 = int.Parse(splitQuery[0]);
                 int input2 = int.Parse(splitQuery[1]);
+
                 var accept = request.Headers["Accept"];
                 int result = input1 + input2;
+
                 if (accept == null || accept.StartsWith("text/html"))
                 {
 
@@ -236,7 +240,6 @@ namespace Webbserver
 
                     output.Close();
                 }
-
             }
             else if ((request.QueryString["input1"] != null) && (request.QueryString["input2"] == null))
             {
@@ -246,21 +249,7 @@ namespace Webbserver
                 response.ContentLength64 = buffer.Length;
                 System.IO.Stream output = response.OutputStream;
                 output.Write(buffer, 0, buffer.Length);
-
-                output.Close();
-                /*
-                string[] splitQuery = new string[2];
-                splitQuery[0] = request.QueryString["input1"];               
-                int input1 = int.Parse(splitQuery[0]);                
-                int result = input1;
-                
-                string dynamicPage = "<html><body>" + result.ToString() + "</body></html>";
-                byte[] buffer = Encoding.UTF8.GetBytes(dynamicPage);
-                response.ContentLength64 = buffer.Length;
-                System.IO.Stream output = response.OutputStream;
-                output.Write(buffer, 0, buffer.Length);
-                output.Close();
-                */
+                output.Close();              
             }
         }
     }    
